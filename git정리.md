@@ -1,19 +1,19 @@
 # Git
 ### 목차
-[1. Git?](#1. git?)<br>
-[2. Git 구조](#2. git-구조)<br>
-[3. 용어 및 명령어](#3. 용어-및-명령어)<br>
-[4. 대표적인 Git 저장소](#4. 대표적인-git-저장소)<br>
+[1. Git?](#git?)<br>
+[2. Git 구조](#git-구조)<br>
+[3. 용어 및 명령어](#용어-및-명령어)<br>
+[4. 대표적인 Git 저장소](#대표적인-git-저장소)<br>
 <hr>
 
-### 1. Git?<br>
+### Git?<br>
 분산 버전 관리 시스템이라 한다. 프로젝트와 같은 협업을 처음 할때 깃을 사용하지 않았다면<br>
 1차수정_201102.zip -> 2차수정_201103.zip -> 최종_201105.zip -> 진짜최종_201106.zip -> 진짜진짜최종_201107.zip -> ...<br>
 이런식으로 버전을 계속해서 수정하고 zip이나 txt파일형태로 주고 받은 기억이 있을것이다.<br>
 깃을 사용하면 이러한 번거로운 버전 관리를 효율적으로 관리할 수 있게 된다.<br>
 <hr>
 
-### 2. Git 구조
+### Git 구조
 ![Git 구조](http://pismute.github.io/whygitisbetter/images/local-remote.png "Git 구조")<br>
 (사진 출처: http://pismute.github.io/whygitisbetter/images/local-remote.png)<br>
 - working directory : 수정할 파일들이 있는 디렉토리
@@ -22,7 +22,7 @@
 - remote repo : remote repository를 운용하는 서버에 있는 git repository(대표적으로 github, gitlab 등)
 <hr>
 
-### 3. 용어 및 명령어<br>
+### 용어 및 명령어<br>
 - 저장소(Repository): 프로젝트가 거주할 수 있는 디렉터리나 저장 공간. "repo"로 줄여서 사용한다. 사용자의 컴퓨터 안의 로컬 폴더가 될 수도 있고,
 깃허브나 다른 온라인 호스트의 저장 공간이 될 수도 있다.
 - 커밋(Commit): 커밋을 하면 해당 시점의 사용자의 저장소의 스냅샷을 찍어, 프로젝트를 이전의 어떠한 상태로든 재평가하거나 복원할 수 있는 체크포인트를 가질 수 있다.
@@ -92,7 +92,7 @@ $ git pull
 
 <hr>
 
-### 4. 대표적인 Git 저장소
+### 대표적인 Git 저장소
 1. Github: https://github.com/<br>
 2. GitLab: https://gitlab.com/<br>
 
