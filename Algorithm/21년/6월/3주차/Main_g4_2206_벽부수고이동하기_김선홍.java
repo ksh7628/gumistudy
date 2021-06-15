@@ -76,6 +76,7 @@ public class Main_g4_2206_벽부수고이동하기_김선홍 {
 					if (visit[1][nx][ny] || map[nx][ny] == '1') {
 						continue;
 					}
+					
 					visit[1][nx][ny] = true;
 					q.offer(new Wall(nx, ny, w.dist + 1, 1));
 				} else {// 벽을 아직 안부쉈다면
