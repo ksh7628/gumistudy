@@ -332,4 +332,5 @@ public PersonServiceImpl(@Qualifier("bdao") BirdDao birdDao,
 - https://goddaehee.tistory.com/156
 - https://js2prince.tistory.com/entry/Spring-IOC-%EC%BB%A8%ED%85%8C%EC%9D%B4%EB%84%88-%EB%9E%80
 - http://jinioh88.blogspot.com/2018/08/spring-di-1.html
+- https://feco.tistory.com/12
 - https://haruhiism.tistory.com/186
