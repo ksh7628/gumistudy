@@ -1,0 +1,210 @@
+# Chapter 6. Synchronization
+  [6.1. Background](#6.1. Background)
+  
+  [6.2. Critical-Section, 임계 구역](#6.2. Critical-Section, 임계 구역)
+  
+  [6.3. Peterson's Solution](#6.3. Peterson's Solution)
+  
+  [6.4. Hardware Support for Synchronization](#6.4. Hardware Support for Synchronization)
+  
+  [6.5. Mutex-Locks](#6.5. Mutex-Locks)
+  
+  [6.6. Semaphores](#6.6. Semaphores)
+  
+  [6.7. Monitors](#6.7. Monitors)
+  
+  [6.8. Deadlock](#6.8. Deadlock)
+  
+## 6.1. Background
+
+- Process Synchronization (=Concurrency Control, 병행 제어)
+
+    > 하나의 자원을 한 순간에 하나의 프로세스만이 이용하도록 제어하는 것
+
+    공유 데이터의 동시 접근은 데이터의 불일치 문제를 발생시킬 수 있다.
+
+    일관성 유지를 위해서는 협력 프로세스 간의 실행 순서를 정해주는 매커니즘(동기화)이 필요하다.
+
+- 데이터의 접근
+
+    연산은 Storage에 있는 Data를 가져와서 수행하고 다시 Data를 저장하는 형태로 이루어진다.
+
+    이 때 데이터의 접근하는 연산이 다양하다면, 데이터가 의도하지 않은 모양을 띌 수 있다.
+
+- Race Condition (경쟁 상태)
+
+    여러 주체가 하나의 데이터를 수정하는 경우
+
+    ```jsx
+    "운영체제에서 Race Condition이 일어나는 경우"
+    1. kernel 수행 중 인터럽트 발생 시
+    2. Process가 시스템콜을 하여 커널모드를 수행 중인데 Context Switch 일어나는 경우
+    3. MultiProcessor에서 공유 메모리 내의 커널 데이터 수정 시
+    ```
+
+- Process Synchronization (프로세스 동기화)
+
+    공유 데이터의 **동시 접근**은 데이터의 불일치 문제를 발생 시킬 수 있다. 
+
+    → 일관성 유지를 위해 협력 프로세스 간의 **실행 순서 메커니즘**이 필요하다.
+
+    ```jsx
+    "OS의 Race Condition 해결방법"
+    1. 인터럽트로 바꾼 연산은 적용하지 않는다. 
+    2. 커널모드일때는 CPU Preempt 하지 않는다.
+    3. 두개 이상의 CPU가 하나의 메모리를 수정하려하는 경우
+    	3-1. 개별 변수별로 lock 개념을 도입하여 하나의 CPU만 연산할 수 있게 한다.
+    	3-2. 커널 접근 CPU를 하나로 제한하여 커널 자체를 lock/unlock
+    ```
+
+## 6.2. Critical-Section, 임계 구역
+
+- The Critical-Section Problem
+
+    Critical-Section, 임계 구역: 공유 데이터에 접근하는 코드 `ex. X=X+1`  즉, race condition이 일어날 수 도 있는 구간
+
+    이러한 임계 구역에서 다른 임계 구역으로 접근하려고 하는 경우, 임계 구역이 비어있지 않다면 entry/exit section에서 제한해야 한다.
+
+    ```jsx
+    while(true){
+    	entry section
+    	critical section
+    	exit section
+    	remainder section
+    }
+    ```
+
+    한 번에 하나의 프로세스만 공유 메모리에 접근하도록 한다.
+
+## 6.3. Peterson's Solution
+
+- Peterson's Solution
+
+    동기화 문제에서 발생하는 상호배제를 위한 병렬 프로그래밍 알고리즘(소프트웨어적 Critical-Section Problem 해결방법)
+
+    **공유변수: flag, turn**
+
+    ```jsx
+    //i가 자원을 사용할 때...
+    while(true){
+    	flag[i] = true;
+    	turn = j;
+    	while(flag[j] && turn == j); //busy-wait
+    	--critical section;
+    	flag[i] = false;
+    	--remainder section;
+    }
+    ```
+
+- The Critical-Section Problem의 3가지 해결 조건
+    1. 상호배제(Mutual Exclusion)가 보존되어야한다. (스레드는 서로 배타적)
+    2. 임계영역에 어떤 스레드의 접근도 없을 때, 접근이 가능해야한다.
+    3. 스레드의 무한정 대기가 없어야한다.
+
+## 6.4. Hardware Support for Synchronization
+
+- Test & Modify
+
+    하드웨어적으로 하나의 instruction만 주어지면 Critical-Section Problem이 해결된다. 즉, 읽고 쓰기를 동시에 수행한다.
+
+- instruction
+
+    Test_and_set(a)라는 instruction은 a가 test와 modify를 atomic하게 수행할 수 있도록 지원한다.
+
+    ```jsx
+    while(true){
+    	while(Test_and_set(lock)); //lock이 걸려있는지 체크 + 기다림
+    	critical section
+    	lock = false; //공유변수 lock
+    	remainder section
+    }
+    ```
+
+## 6.5. Mutex-Locks
+
+- **busy-wait**
+
+    임계구역 전 entry section에서 자원을 기다림
+
+    ```jsx
+    while(true){
+    	entry section
+    	critical section
+    	exit section
+    	remainder section
+    }
+    ```
+
+    → 임계 구역의 길이가 길어 오래 기다리는 경우를 해결하기위하여 **block-wake** 방법 도입
+
+- Semaphore 구조체 내 함수를 만들어 **block-wake** 구현
+    - **block()** 자원 획득을 기다리는 시간이 길어지면 프로세스를 잠들게 함(sleep lock)
+    - **wake-Up()** 자원이 반납되는 경우, 잠들어있던 프로세스를 깨움
+- busy-wait과 block-wake **비교**
+
+    busy-wait: 임계구역이 짧은 경우, block-wake의 오버헤드가 더 크기 때문에 busy-wait가 효율적
+
+    block-wake: 임계구역의 길이가 긴 경우, (대체로) block-wake 방식 사용
+
+## 6.6. Semaphores
+
+- Two Types of Semaphores
+
+    **Semaphores** 추상자료형
+
+    자원의 개수를 담고 있음
+
+    두 가지 atomic 연산에 의해서만 접근 가능
+
+    ```jsx
+    //연산 1, 공유데이터 획득 과정
+    P(S): while(s<=0) do no-op;
+    			s--;
+    //연산 2, 공유데이터 반납 과정
+    V(S): s++;
+    ```
+
+    1. Counting Semaphore
+
+        도메인이 0인 정수값, 자원의 개수를 뜻한다.
+
+    2. Binary Semaphore
+
+        0 또는 1로 표현하여 주로 mutual exclusion 상황에 쓰임 
+
+## 6.7. Monitors
+
+- Semaphore의 문제점
+    1. 코딩하기 힘들다.
+    2. 정확성 인증이 어렵다.
+    3. 자발적 협력이 필요하다.
+    4. 한 번의 실수가 모든 시스템에 치명적 영향을 준다.
+- **Monitor** (Semaphore 대안책)
+
+    동시 수행 중인 프로세스 사이에서 abstract data type의 안전한 공유를 보장하기 위한 high-level synchronization structure
+
+    
+
+    연산(프로시저)가 모니터 안에 정의된 데이터만 접근할 수 있도록 함.
+
+    → **lock의 필요성이 없어짐**
+
+    1. 모니터 내에서 한 번에 하나의 프로세스만 가능
+    2. 프로세스가 모니터 안에서 기다릴 수 있게 condition variable(wait(), signal()) 사용
+
+        wait() : 잠들게하는 변수
+
+        signal() : 잠들어 있는 연산이 있다면 깨우라고 신호 주는 변수
+
+## 6.8. Deadlock
+
+- Deadlock
+
+    둘 이상의 프로세스가 서로 상대방에 의해 충족될 수 있는 이벤트를 무한히 기다리는 현상
+
+    
+    해결: 자원 접근에 순서를 둘 것 `ex. S 먼저 잡고 Q 잡기` 
+
+- Starvation
+
+    특정 프로세스가 자원을 얻지 못하고 무한히 기다리는 현상
