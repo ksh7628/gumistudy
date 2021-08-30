@@ -1,10 +1,10 @@
-  * [탈중앙화](#----)
-  * [종류](#--)
-  * [개발 과정](#-----)
-  * [이더리움](#----)
-      - [1세대 블록체인과 이더리움의 차이점](#1------------------)
-      - [Geth(Go-ethereum)](#geth-go-ethereum-)
-  * [Reference](#reference)
+  - [Block Chain](#block-chain)
+   * [종류](#--)
+   * [개발 과정](#-----)
+   * [이더리움](#----)
+         - [1세대 블록체인과 이더리움의 차이점](#1------------------)
+         - [Geth(Go-ethereum)](#geth-go-ethereum-)
+   * [Reference](#reference)
 
 
 # Block-Chain
