@@ -175,6 +175,11 @@ select date_format('2020/02/06 15:16:50', '%Y.%m.%d %H:%i:%s')
 2020.02.06 03:16:50
 ```
 
+# JOIN
+
+![sqljoins](https://t1.daumcdn.net/cfile/tistory/99219C345BE91A7E32)
+
+
 ## References
 - https://devdhjo.github.io/mysql/2020/01/30/database-mysql-003.html
 - http://egloos.zum.com/metalbear/v/3521684
